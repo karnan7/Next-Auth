@@ -1,13 +1,31 @@
 "use client";
 import Link from "next/link";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import axios from "axios";
 
 export default function SignupPage() {
+  const router = useRouter();
   const [user, setUser] = useState({
     username: "",
     email: "",
     password: "",
   });
+
+  const [loading, setLoading] = React.useState(false);
+
+  const onSignUp = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.post("api/users/signup", user);
+
+      router.push("/login");
+    } catch (error: any) {
+      console.log("signup failed", error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUser({ ...user, [e.target.name]: e.target.value });
@@ -46,8 +64,11 @@ export default function SignupPage() {
             value={user.password}
             onChange={handleChange}
           />
-          <button className="bg-violet-500 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded mt-10">
-            Create Account
+          <button
+            onClick={onSignUp}
+            className="bg-violet-500 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded mt-10"
+          >
+            {loading ? "Creating" : "Create Account"}
           </button>
           <span>
             Already have an account ?
