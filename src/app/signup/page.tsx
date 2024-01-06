@@ -14,12 +14,14 @@ export default function SignupPage() {
 
   const [loading, setLoading] = React.useState(false);
 
-  const onSignUp = async () => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     try {
       setLoading(true);
-      const response = await axios.post("api/users/signup", user);
-      console.log("response", response);
-      router.push("/login");
+      const response = await axios.post("/api/users/signup", user);
+      if (response) {
+        router.push("/login");
+      }
     } catch (error: any) {
       console.log("signup failed", error.message);
     } finally {
@@ -39,7 +41,10 @@ export default function SignupPage() {
       </div>
       <div className="text-black bg-white p-[80px] rounded-l-3xl min-w-[700px] flex flex-col items-center">
         <h1 className="text-4xl font-bold mb-8">Create Account</h1>
-        <form action="" className="flex flex-col gap-10 w-[450px]">
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col gap-10 w-[450px]"
+        >
           <input
             type="text"
             name="username"
@@ -65,7 +70,7 @@ export default function SignupPage() {
             onChange={handleChange}
           />
           <button
-            onClick={onSignUp}
+            type="submit"
             className="bg-violet-500 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded mt-10"
           >
             {loading ? "Creating..." : "Create Account"}
