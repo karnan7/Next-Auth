@@ -1,15 +1,34 @@
 "use client";
+import axios from "axios";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [user, setUser] = useState({
     email: "",
     password: "",
   });
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUser({ ...user, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      const response = await axios.post("/api/users/login", user);
+      if (response) {
+        router.push("/profile");
+      }
+    } catch (error: any) {
+      console.log("Login failed", error.message);
+    } finally {
+      setLoading(false);
+    }
   };
   return (
     <div className="h-screen w-screen bg-violet-600 flex justify-between">
@@ -20,7 +39,10 @@ export default function LoginPage() {
       </div>
       <div className="text-black bg-white p-[80px] rounded-l-3xl min-w-[700px] flex flex-col items-center">
         <h1 className="text-4xl font-bold mb-8">Login</h1>
-        <form action="" className="flex flex-col gap-10 w-[450px]">
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col gap-10 w-[450px]"
+        >
           <input
             type="email"
             name="email"
@@ -43,8 +65,11 @@ export default function LoginPage() {
           >
             <span>Forgot Password?</span>
           </Link>
-          <button className="bg-violet-500 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded">
-            Login
+          <button
+            type="submit"
+            className="bg-violet-500 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded"
+          >
+            {loading ? "Logging..." : "Login"}
           </button>
           <span>
             Doesn't have an account ?
