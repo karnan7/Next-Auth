@@ -3,6 +3,7 @@ import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -25,7 +26,7 @@ export default function LoginPage() {
         router.push("/profile");
       }
     } catch (error: any) {
-      console.log("Login failed", error.message);
+      toast.error(error.message);
     } finally {
       setLoading(false);
     }
